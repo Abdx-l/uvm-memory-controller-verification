@@ -9,6 +9,13 @@ module top;
  .wdata(bus.wdata),.ready(bus.ready),.rvalid(bus.rvalid),.rdata(bus.rdata),.*);
  memory_model memory(.clk(clk),.rst(bus.rst),.cmd(cmd),.bank(cmd_bank),.row(cmd_row),.col(cmd_col),.wdata(cmd_wdata),.rdata(mem_rdata));
  initial begin bus.rst=1;repeat(4) @(negedge clk);bus.rst=0;end
- initial begin uvm_config_db#(virtual mem_if)::set(null,"*","vif",bus);run_test("memory_test");end
+ initial begin
+ uvm_report_server report_server;
+ uvm_top.finish_on_completion=0;
+ uvm_config_db#(virtual mem_if)::set(null,"*","vif",bus);run_test("memory_test");
+ report_server=uvm_report_server::get_server();
+ if(report_server.get_severity_count(UVM_ERROR)>0 || report_server.get_severity_count(UVM_FATAL)>0) $fatal(1,"UVM checks failed");
+ $finish;
+ end
  initial begin #1000000;$fatal(1,"timeout");end
 endmodule
