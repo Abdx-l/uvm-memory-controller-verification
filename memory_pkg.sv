@@ -23,7 +23,7 @@ package memory_pkg;
   task body();
    mem_item t;
    // Initialize every location before random read/write traffic.
-   for(int b=0;b<4;b++) for(int r=0;r<4;r++) for(int c=0;c<4;c++) begin
+   for(int b=0;b<4;b++) for(int r=0;r<4;r++) for(int c=0;c<16;c++) begin
     t=mem_item::type_id::create("init"); start_item(t);
     t.write=1;t.bank=b;t.row=r;t.col=c;t.data=(b<<8)|(r<<4)|c;finish_item(t);
    end
