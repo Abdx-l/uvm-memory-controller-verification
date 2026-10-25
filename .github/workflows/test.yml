@@ -1,0 +1,26 @@
+name: UVM regression
+on: [push, pull_request]
+jobs:
+  simulation:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Cache pinned simulator
+        uses: actions/cache@v4
+        with:
+          path: .deps
+          key: verilator-5.052-linux-x86_64-580b7b6d
+      - name: Build full UVM environment
+        run: make build JOBS=2
+      - name: Run seeded, reset-recovery, and negative regressions
+        run: PATH="$PWD/.deps/verilator/bin:$PATH" python3 scripts/regress.py
+      - name: Preserve simulation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: uvm-regression
+          path: build/results/

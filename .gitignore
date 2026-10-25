@@ -9,3 +9,7 @@ obj/
 *.db
 *.vcd
 *.cf
+.deps/
+obj_dir/
+coverage.dat
+core

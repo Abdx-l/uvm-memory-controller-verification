@@ -3,7 +3,10 @@ interface mem_if(input logic clk);
  logic [1:0] bank;
  logic [3:0] row,col;
  logic [31:0] wdata,rdata;
- // Values are sampled on the falling edge, away from RTL updates.
+ logic [2:0] command;
+ logic [1:0] command_bank;
+ logic [3:0] command_row;
+ // Driver changes requests on falling edges; monitor samples before NBA updates.
  property stable_request;
   @(posedge clk) disable iff(rst) valid && !ready |=> $stable({write,bank,row,col,wdata});
  endproperty
